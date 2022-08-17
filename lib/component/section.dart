@@ -3,7 +3,7 @@ import 'package:reading_app/component/book.dart';
 
 class Section extends StatelessWidget {
   const Section({Key? key, required this.material}) : super(key: key);
-  final material;
+  final String? material;
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +13,7 @@ class Section extends StatelessWidget {
           Row(
             children: [
               Text(
-                material,
+                material!,
                 style: const TextStyle(
                     color: Colors.purple,
                     fontWeight: FontWeight.bold,
@@ -32,7 +32,7 @@ class Section extends StatelessWidget {
             child: ListView(
               // This next line does the trick.
               scrollDirection: Axis.horizontal,
-              children: <Book>[
+              children: const <Book>[
                 Book(
                   name: 'la solitudine dei numeri primi',
                   author: "sconosciuto 1",

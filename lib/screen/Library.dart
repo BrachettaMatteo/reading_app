@@ -14,7 +14,7 @@ class _LibraryState extends State<Library> {
   Widget build(BuildContext context) {
     return Center(
       child: ListView(
-        children: <Section>[
+        children: const <Section>[
           Section(material: "Geometria"),
           Section(material: "Algebra"),
           Section(material: "AI"),

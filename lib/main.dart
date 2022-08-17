@@ -23,22 +23,32 @@ Future<void> main() async {
           appBarTheme: const AppBarTheme(
             titleTextStyle: TextStyle(
                 color: Colors.black, fontWeight: FontWeight.bold, fontSize: 25),
-          )),
+          ),
+          textTheme: const TextTheme(
+            titleLarge: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+          ),
+          primaryColor: Colors.black),
       darkTheme: ThemeData(
           brightness: Brightness.dark,
           appBarTheme: const AppBarTheme(
             titleTextStyle: TextStyle(
                 color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25),
-          )),
-      home: App()));
+          ),
+          textTheme: const TextTheme(
+            titleLarge: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+          ),
+          primaryColor: Colors.white),
+      home: const App()));
 }
 
 class App extends StatefulWidget {
+  const App({Key? key}) : super(key: key);
+
   @override
-  _ExampleState createState() => _ExampleState();
+  _MainApp createState() => _MainApp();
 }
 
-class _ExampleState extends State<App> {
+class _MainApp extends State<App> {
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
     MyHomePage(),
@@ -88,8 +98,8 @@ class _ExampleState extends State<App> {
                 iconSize: 24,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                tabBackgroundColor: Colors.grey[100]!,
-                color: Colors.black,
+                tabBackgroundColor: Colors.grey[100]!.withOpacity(0.9),
+                color: Theme.of(context).primaryColor.withOpacity(0.9),
                 tabs: const [
                   GButton(
                     icon: Icons.home_outlined,
