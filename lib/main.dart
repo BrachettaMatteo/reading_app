@@ -17,8 +17,9 @@ Future<void> main() async {
       builder: (context, child) {
         return Directionality(textDirection: TextDirection.ltr, child: child!);
       },
-      debugShowCheckedModeBanner: true,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
+          backgroundColor: Colors.amber,
           brightness: Brightness.light,
           appBarTheme: const AppBarTheme(
             titleTextStyle: TextStyle(
@@ -38,14 +39,16 @@ Future<void> main() async {
             titleLarge: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
           ),
           primaryColor: Colors.white),
-      home: const App()));
+      home: const App(page: 0)));
 }
 
 class App extends StatefulWidget {
-  const App({Key? key}) : super(key: key);
+  final int page;
+
+  const App({Key? key, required this.page}) : super(key: key);
 
   @override
-  _MainApp createState() => _MainApp();
+  _MainApp createState() => _MainApp(page);
 }
 
 class _MainApp extends State<App> {
@@ -61,6 +64,10 @@ class _MainApp extends State<App> {
     Text("Profile"),
   ];
 
+  _MainApp(int page) {
+    page < 0 || page > 3 ? _selectedIndex = 0 : _selectedIndex = page;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (FirebaseAuth.instance.currentUser == null) {
@@ -73,6 +80,7 @@ class _MainApp extends State<App> {
           bottomOpacity: 0.0,
           elevation: 0.0,
           title: _nameOptions.elementAt(_selectedIndex),
+          titleTextStyle: Theme.of(context).textTheme.titleLarge,
         ),
         body: Center(
           child: _widgetOptions.elementAt(_selectedIndex),
@@ -128,8 +136,8 @@ class _MainApp extends State<App> {
     }
   }
 }
-
+/* 
 Future<FirebaseApp> _initializeFirebase() async {
   FirebaseApp firebaseApp = await Firebase.initializeApp();
   return firebaseApp;
-}
+} */

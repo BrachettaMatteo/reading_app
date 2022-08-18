@@ -9,6 +9,10 @@ creare un app (Ios/ Android) in grado di aiutare e/o condividere documenti testu
 ``` bash
 git clone https://github.com/BrachettaMatteo/readingApp
 ``` 
+* "sistemazione" dipendenza  flutter
+``` bash
+flutter pub get
+``` 
 * esecuzione 
 ``` bash
 flutter run  
