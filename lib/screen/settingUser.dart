@@ -35,7 +35,7 @@ class _SettingUserInfoState extends State<SettingUserInfo> {
             onPressed: () =>
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
                     builder: (context) => const App(
-                          page: 2,
+                          page: profile,
                         ))),
           ),
           backgroundColor: Theme.of(context).canvasColor,
@@ -263,15 +263,45 @@ class _SettingUserInfoState extends State<SettingUserInfo> {
               const SizedBox(width: 20),
               TextButton(
                 onPressed: () => {
-                  // query to firebase
-                  users.doc(documentId).set(<String, dynamic>{
-                    "name": nameController.text,
-                    "surname": surnameController.text,
-                    "username": usernameController.text,
+                  //get oldUsername
+
+                  FirebaseFirestore.instance
+                      .collection('Users')
+                      .doc(FirebaseAuth.instance.currentUser!.email)
+                      .get()
+                      .then((value) {
+                    users.doc(documentId).set(<String, dynamic>{
+                      "name": nameController.text,
+                      "surname": surnameController.text,
+                      "username": usernameController.text,
+                    });
+                    FirebaseFirestore.instance
+                        .collection('Books')
+                        .where('author', isEqualTo: value['username'])
+                        .get()
+                        .then((QuerySnapshot querySnapshot) {
+                      for (var doc in querySnapshot.docs) {
+                        FirebaseFirestore.instance
+                            .collection('Books')
+                            .doc(doc.id)
+                            .set(
+                          <String, dynamic>{
+                            "author": usernameController.text,
+                          },
+                          SetOptions(merge: true),
+                        );
+                      }
+                    });
                   }),
+
+                  //update author book
+                  //query research username
+
+                  // change information
+
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => const App(
-                            page: 2,
+                            page: profile,
                           )))
                 },
                 child: const Text(

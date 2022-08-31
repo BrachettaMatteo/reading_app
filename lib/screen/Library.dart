@@ -1,5 +1,7 @@
-import '../component/section.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+
+import '../component/section.dart';
 
 class Library extends StatefulWidget {
   const Library({Key? key}) : super(key: key);
@@ -11,15 +13,38 @@ class Library extends StatefulWidget {
 class _LibraryState extends State<Library> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ListView(
-        children: const <Section>[
-          Section(material: "Geometria"),
-          Section(material: "Algebra"),
-          Section(material: "AI"),
-          Section(material: "Informatica")
-        ],
-      ),
-    );
+    getElement();
+    return SafeArea(
+        child: FutureBuilder(
+            future: getElement(),
+            builder: (context, AsyncSnapshot snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              } else {
+                return ListView.builder(
+                    itemCount: snapshot.data.length,
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Section(material: snapshot.data[index]);
+                    });
+              }
+            }));
+  }
+
+  Future<List<String>> getElement() async {
+    Future<List<String>> cat = FirebaseFirestore.instance
+        .collection('Books')
+        .orderBy('category')
+        .get()
+        .then((QuerySnapshot qR) {
+      List<String> el = [];
+      for (var element in qR.docs) {
+        if (!el.contains(element['category'])) {
+          el.add(element['category']);
+        }
+      }
+      return el;
+    });
+    return await cat;
   }
 }

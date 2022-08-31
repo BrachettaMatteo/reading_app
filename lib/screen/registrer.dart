@@ -44,7 +44,7 @@ class _RegisterState extends State<Register> {
             onPressed: () =>
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
                     builder: (context) => const App(
-                          page: 2,
+                          page: profile,
                         ))),
           ),
           backgroundColor: Theme.of(context).canvasColor,
@@ -189,7 +189,8 @@ class _RegisterState extends State<Register> {
                             _confirmPolicy = value!;
                           });
                         },
-                        checkColor: Theme.of(context).backgroundColor,
+                        // checkColor: Theme.of(context).backgroundColor,
+                        checkColor: Colors.green,
                         fillColor:
                             MaterialStateProperty.resolveWith<Color>((states) {
                           if (_confirmPolicy) {
@@ -240,7 +241,7 @@ class _RegisterState extends State<Register> {
             email: emailController.text, password: passwordController.text);
         log("correct register account and login");
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const App(page: 0)));
+            MaterialPageRoute(builder: (context) => const App(page: homepage)));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
           log('The password provided is too weak.');

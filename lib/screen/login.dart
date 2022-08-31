@@ -126,7 +126,7 @@ class _MyLoginPageState extends State<Login> {
                     );
                     if (FirebaseAuth.instance.currentUser != null) {
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const App(page: 0)));
+                          builder: (context) => const App(page: homepage)));
                     }
                   } on FirebaseAuthException catch (e) {
                     _err = "Error credential";

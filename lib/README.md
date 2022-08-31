@@ -11,4 +11,4 @@
     * [Auth](https://firebase.google.com/docs/auth) per gestire l'autenticazione dell'app
     * [Cloud Firestore](https://firebase.google.com/docs/firestore) per gestire e mantenere i dati utente e i documenti creati
     
-* 
+

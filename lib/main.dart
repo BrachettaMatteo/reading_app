@@ -14,33 +14,42 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(MaterialApp(
-      builder: (context, child) {
-        return Directionality(textDirection: TextDirection.ltr, child: child!);
-      },
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          backgroundColor: Colors.amber,
-          brightness: Brightness.light,
-          appBarTheme: const AppBarTheme(
-            titleTextStyle: TextStyle(
-                color: Colors.black, fontWeight: FontWeight.bold, fontSize: 25),
-          ),
-          textTheme: const TextTheme(
-            titleLarge: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
-          ),
-          primaryColor: Colors.black),
-      darkTheme: ThemeData(
-          brightness: Brightness.dark,
-          appBarTheme: const AppBarTheme(
-            titleTextStyle: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25),
-          ),
-          textTheme: const TextTheme(
-            titleLarge: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
-          ),
-          primaryColor: Colors.white),
-      home: const App(page: 0)));
+    builder: (context, child) {
+      return Directionality(textDirection: TextDirection.ltr, child: child!);
+    },
+    debugShowCheckedModeBanner: false,
+    theme: ThemeData(
+        brightness: Brightness.light,
+        appBarTheme: const AppBarTheme(
+          titleTextStyle: TextStyle(
+              color: Colors.black, fontWeight: FontWeight.bold, fontSize: 25),
+        ),
+        textTheme: const TextTheme(
+          titleLarge: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+        ),
+        primaryColor: Colors.black),
+    darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        appBarTheme: const AppBarTheme(
+          titleTextStyle: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25),
+        ),
+        textTheme: const TextTheme(
+          titleLarge: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+        ),
+        primaryColor: Colors.white),
+    home: const App(page: 0),
+  ));
 }
+
+///Global constat, rappresent the HOMEPAGE SCREEN
+const homepage = 0;
+
+///Global constat, rappresent the LIBRARY SCREEN
+const library = 1;
+
+///Global constat, rappresent the PROFILE SCREEN
+const profile = 2;
 
 class App extends StatefulWidget {
   final int page;
@@ -48,7 +57,9 @@ class App extends StatefulWidget {
   const App({Key? key, required this.page}) : super(key: key);
 
   @override
-  _MainApp createState() => _MainApp(page);
+  _MainApp createState() {
+    return _MainApp(page);
+  }
 }
 
 class _MainApp extends State<App> {
@@ -136,8 +147,3 @@ class _MainApp extends State<App> {
     }
   }
 }
-/* 
-Future<FirebaseApp> _initializeFirebase() async {
-  FirebaseApp firebaseApp = await Firebase.initializeApp();
-  return firebaseApp;
-} */

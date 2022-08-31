@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:reading_app/main.dart';
 import 'package:reading_app/screen/settingUser.dart';
-import '../component/SEC.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -37,21 +36,19 @@ class _ProfileState extends State<Profile> {
           ),
           const SizedBox(height: 20),
           Column(children: [
-            const Sec(
-              nameSec: "Data Information",
+            Text(
+              "Data Information",
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 10),
             FutureBuilder<DocumentSnapshot>(
               future: users.doc(documentId).get(),
               builder: (BuildContext context,
                   AsyncSnapshot<DocumentSnapshot> snapshot) {
-                if (snapshot.hasError) {
-                  return const Text("Something went wrong");
-                }
-
-                if (snapshot.hasData && !snapshot.data!.exists) {
+                if (snapshot.hasData && !snapshot.data!.exists ||
+                    snapshot.hasError) {
                   return const Text(
-                    "Information does not exist",
+                    "Something went wrong",
                     style: TextStyle(color: Colors.red),
                   );
                 }
@@ -59,67 +56,69 @@ class _ProfileState extends State<Profile> {
                 if (snapshot.connectionState == ConnectionState.done) {
                   Map<String, dynamic> data =
                       snapshot.data!.data() as Map<String, dynamic>;
-                  return Column(
-                    children: [
-                      Row(
+
+                  return Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 2, 2, 2),
+                      child: Column(
                         children: [
-                          const Spacer(),
-                          Text(
-                            "Full Name: ",
-                            style: Theme.of(context)
-                                .textTheme
-                                .subtitle2
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                          Row(children: [
+                            Text(
+                              "Username: ",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle2
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            Text(data['username']),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.03,
+                            ),
+                          ]),
+                          Row(
+                            children: [
+                              Text(
+                                "Email: ",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle2
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              Text(documentId!),
+                            ],
                           ),
-                          Text(data['name']),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.03,
+                          const SizedBox(height: 5),
+                          Row(
+                            children: [
+                              Text(
+                                "Full Name: ",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle2
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              Text(data['name']),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.03,
+                              ),
+                            ],
                           ),
-                          Text(
-                            "Surname: ",
-                            style: Theme.of(context)
-                                .textTheme
-                                .subtitle2
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                          Row(
+                            children: [
+                              Text(
+                                "Surname: ",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle2
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              Text(data['surname']),
+                            ],
                           ),
-                          Text(data['surname']),
-                          const Spacer(),
                         ],
-                      ),
-                      const SizedBox(height: 5),
-                      Row(children: [
-                        const Spacer(),
-                        Text(
-                          "Username: ",
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle2
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        Text(data['username']),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.03,
-                        ),
-                        Text(
-                          "Email: ",
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle2
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        Text(documentId!),
-                        const Spacer()
-                      ]),
-                    ],
-                  );
+                      ));
                 }
 
-                return const Center(
-                  child: Text(
-                    "loading data",
-                    style: TextStyle(color: Colors.red),
-                  ),
-                );
+                return const Center(child: CircularProgressIndicator());
               },
             ),
             TextButton.icon(
@@ -131,10 +130,6 @@ class _ProfileState extends State<Profile> {
               label: const Text("change information"),
             ),
           ]),
-          const SizedBox(height: 20),
-          const Sec(
-            nameSec: "Collaboration",
-          ),
           const SizedBox(height: 20),
           Center(
               child: SizedBox(
@@ -159,6 +154,6 @@ class _ProfileState extends State<Profile> {
     await FirebaseAuth.instance.signOut();
     // controll correct logout
     Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const App(page: 0)));
+        MaterialPageRoute(builder: (context) => const App(page: homepage)));
   }
 }

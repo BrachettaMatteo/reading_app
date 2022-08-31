@@ -47,3 +47,5 @@ app.*.map.json
 
 # editor visual Studiocode 
 /.idea
+
+progress.md
