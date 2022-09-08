@@ -1,9 +1,6 @@
 import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../main.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -35,18 +32,7 @@ class _RegisterState extends State<Register> {
     return Scaffold(
         appBar: AppBar(
           centerTitle: false,
-          title: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
-              color: Colors.blue,
-              size: 35,
-            ),
-            onPressed: () =>
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => const App(
-                          page: profile,
-                        ))),
-          ),
+          iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
           backgroundColor: Theme.of(context).canvasColor,
           elevation: 0,
         ),
@@ -240,8 +226,7 @@ class _RegisterState extends State<Register> {
         FirebaseAuth.instance.signInWithEmailAndPassword(
             email: emailController.text, password: passwordController.text);
         log("correct register account and login");
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const App(page: homepage)));
+        Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
           log('The password provided is too weak.');
@@ -249,7 +234,7 @@ class _RegisterState extends State<Register> {
           log('The account already exists for that email.');
         }
       } catch (e) {
-        print(e);
+        log("error: $e");
       }
     }
   }

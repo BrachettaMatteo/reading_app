@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:reading_app/main.dart';
-import 'package:reading_app/screen/settingUser.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -123,8 +121,7 @@ class _ProfileState extends State<Profile> {
             ),
             TextButton.icon(
               onPressed: () {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => const SettingUserInfo()));
+                Navigator.pushNamed(context, '/setting_user');
               },
               icon: const Icon(Icons.settings, size: 18),
               label: const Text("change information"),
@@ -152,8 +149,8 @@ class _ProfileState extends State<Profile> {
   void _logout() async {
     //Logout firebase  user
     await FirebaseAuth.instance.signOut();
+
     // controll correct logout
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const App(page: homepage)));
+    Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);
   }
 }

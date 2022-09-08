@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../component/section.dart';
+import '../../widget/section/section.dart';
 
 class Library extends StatefulWidget {
   const Library({Key? key}) : super(key: key);

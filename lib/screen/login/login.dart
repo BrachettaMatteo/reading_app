@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:reading_app/screen/registrer.dart';
-
-import '../main.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -55,8 +52,8 @@ class _MyLoginPageState extends State<Login> {
                   TextFormField(
                     controller: emailController,
                     decoration: InputDecoration(
-                        hintText: 'Insert your username',
-                        labelText: 'Username ',
+                        hintText: 'Insert your email',
+                        labelText: 'email ',
                         labelStyle: Theme.of(context).textTheme.bodyText2,
                         hintStyle: Theme.of(context).textTheme.bodyText2,
                         border: const OutlineInputBorder(
@@ -125,8 +122,8 @@ class _MyLoginPageState extends State<Login> {
                       password: passwordController.text,
                     );
                     if (FirebaseAuth.instance.currentUser != null) {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const App(page: homepage)));
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, '/home', (route) => false);
                     }
                   } on FirebaseAuthException catch (e) {
                     _err = "Error credential";
@@ -167,7 +164,6 @@ class _MyLoginPageState extends State<Login> {
   }
 
   newUser() {
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const Register()));
+    Navigator.pushNamed(context, '/register');
   }
 }

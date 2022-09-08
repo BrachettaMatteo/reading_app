@@ -2,16 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../main.dart';
-
-class SettingUserInfo extends StatefulWidget {
-  const SettingUserInfo({Key? key}) : super(key: key);
+class SettingUser extends StatefulWidget {
+  const SettingUser({Key? key}) : super(key: key);
 
   @override
-  State<SettingUserInfo> createState() => _SettingUserInfoState();
+  State<SettingUser> createState() => _SettingUserState();
 }
 
-class _SettingUserInfoState extends State<SettingUserInfo> {
+class _SettingUserState extends State<SettingUser> {
   TextEditingController nameController = TextEditingController();
   TextEditingController surnameController = TextEditingController();
   TextEditingController usernameController = TextEditingController();
@@ -26,18 +24,7 @@ class _SettingUserInfoState extends State<SettingUserInfo> {
     return Scaffold(
         appBar: AppBar(
           centerTitle: false,
-          title: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
-              size: 35,
-              color: Colors.blue,
-            ),
-            onPressed: () =>
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => const App(
-                          page: profile,
-                        ))),
-          ),
+          iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
           backgroundColor: Theme.of(context).canvasColor,
           elevation: 0,
         ),
@@ -264,17 +251,21 @@ class _SettingUserInfoState extends State<SettingUserInfo> {
               TextButton(
                 onPressed: () => {
                   //get oldUsername
-
                   FirebaseFirestore.instance
                       .collection('Users')
                       .doc(FirebaseAuth.instance.currentUser!.email)
                       .get()
                       .then((value) {
-                    users.doc(documentId).set(<String, dynamic>{
-                      "name": nameController.text,
-                      "surname": surnameController.text,
-                      "username": usernameController.text,
-                    });
+                    FirebaseAuth.instance.currentUser!
+                        .updateDisplayName(usernameController.text);
+                    users.doc(documentId).set(
+                      <String, dynamic>{
+                        "name": nameController.text,
+                        "surname": surnameController.text,
+                        "username": usernameController.text,
+                      },
+                      SetOptions(merge: true),
+                    );
                     FirebaseFirestore.instance
                         .collection('Books')
                         .where('author', isEqualTo: value['username'])
@@ -299,10 +290,8 @@ class _SettingUserInfoState extends State<SettingUserInfo> {
 
                   // change information
 
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => const App(
-                            page: profile,
-                          )))
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, "/profile", (route) => false)
                 },
                 child: const Text(
                   'Apply change',

@@ -1,11 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:reading_app/screen/Library.dart';
-import 'package:reading_app/screen/Profile.dart';
-import 'package:reading_app/screen/homePage.dart';
-import 'package:reading_app/screen/login.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:reading_app/features/new_book.dart';
+import 'package:reading_app/features/reading_book.dart';
+
+import 'package:reading_app/screen/library/library.dart';
+import 'package:reading_app/screen/login/registrer.dart';
+import 'package:reading_app/screen/profile/profile.dart';
+import 'package:reading_app/screen/homepage/home_page.dart';
+import 'package:reading_app/screen/login/login.dart';
+import 'package:reading_app/screen/profile/setting_user.dart';
+
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -14,12 +20,25 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(MaterialApp(
+    initialRoute: '/',
+    routes: {
+      '/': (context) => const App(page: homepage),
+      '/home': (context) => const App(page: homepage),
+      '/library': (context) => const App(page: library),
+      '/profile': (context) => const App(page: profile),
+      '/login': (context) => const Login(),
+      '/register': (context) => const Register(),
+      '/setting_user': (context) => const SettingUser(),
+      '/new_book': (context) => const NewBook(),
+      '/read': (context) => const ReadingBook(),
+    },
     builder: (context, child) {
       return Directionality(textDirection: TextDirection.ltr, child: child!);
     },
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
         brightness: Brightness.light,
+        backgroundColor: Colors.white,
         appBarTheme: const AppBarTheme(
           titleTextStyle: TextStyle(
               color: Colors.black, fontWeight: FontWeight.bold, fontSize: 25),
@@ -38,7 +57,6 @@ Future<void> main() async {
           titleLarge: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
         ),
         primaryColor: Colors.white),
-    home: const App(page: 0),
   ));
 }
 
@@ -58,14 +76,16 @@ class App extends StatefulWidget {
 
   @override
   _MainApp createState() {
-    return _MainApp(page);
+    return _MainApp(page: page);
   }
 }
 
+int sele = 0;
+
 class _MainApp extends State<App> {
-  int _selectedIndex = 0;
+  int _selectedIndex = sele;
   static const List<Widget> _widgetOptions = <Widget>[
-    MyHomePage(),
+    HomePage(),
     Library(),
     Profile()
   ];
@@ -75,7 +95,7 @@ class _MainApp extends State<App> {
     Text("Profile"),
   ];
 
-  _MainApp(int page) {
+  _MainApp({required int page}) {
     page < 0 || page > 3 ? _selectedIndex = 0 : _selectedIndex = page;
   }
 
@@ -145,5 +165,11 @@ class _MainApp extends State<App> {
         ),
       );
     }
+  }
+
+  change(int val) {
+    setState(() {
+      _selectedIndex = val;
+    });
   }
 }
