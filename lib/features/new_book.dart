@@ -1,6 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+///
+///
+///
+///
+///
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:reading_app/firebase_options.dart';
 
 class NewBook extends StatefulWidget {
   const NewBook({Key? key}) : super(key: key);
@@ -10,6 +15,8 @@ class NewBook extends StatefulWidget {
 }
 
 class _NewBookState extends State<NewBook> {
+  String? usernameCurrentUser = FirebaseAuth.instance.currentUser!.displayName!;
+
   TextEditingController titleController = TextEditingController();
   TextEditingController textController = TextEditingController();
   TextEditingController categoryController = TextEditingController();
@@ -59,8 +66,7 @@ class _NewBookState extends State<NewBook> {
                                       BorderRadius.all(Radius.circular(50.0)),
                                 )),
                             validator: (String? value) {
-                              FirebaseFirestore.instance
-                                  .collection("Books")
+                              booksCollection
                                   .where('title',
                                       isEqualTo: titleController.text)
                                   .get()
@@ -109,7 +115,7 @@ class _NewBookState extends State<NewBook> {
                           ),
                           Text(
                             "author: "
-                            "${FirebaseAuth.instance.currentUser!.displayName!}",
+                            "$usernameCurrentUser",
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(
@@ -163,11 +169,10 @@ class _NewBookState extends State<NewBook> {
   /// checks data and add book on library cloud
   void addBook({String? title, String? text, String? category}) {
     if (title != null && text != null && category != null) {
-      FirebaseFirestore.instance
-          .collection("Books")
+      booksCollection
           .add({
             'title': title,
-            'author': FirebaseAuth.instance.currentUser!.displayName,
+            'author': usernameCurrentUser,
             'text': text,
             'category': category.toUpperCase(),
           })

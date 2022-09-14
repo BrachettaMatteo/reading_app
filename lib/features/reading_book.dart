@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import '../main.dart';
+import 'package:flutter/material.dart';
+import 'package:reading_app/firebase_options.dart';
+import 'package:reading_app/main.dart';
 
 class ReadingBook extends StatefulWidget {
   const ReadingBook({Key? key}) : super(key: key);
@@ -26,6 +27,7 @@ class _ReadingBookState extends State<ReadingBook> {
 
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
         title: Text(
           appBartitle,
         ),
@@ -38,8 +40,7 @@ class _ReadingBookState extends State<ReadingBook> {
               padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
               children: [
             StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('Books')
+                stream: booksCollection
                     .where('author', isEqualTo: arguments['author'])
                     .where('title', isEqualTo: arguments['title'])
                     .snapshots(),
@@ -50,7 +51,9 @@ class _ReadingBookState extends State<ReadingBook> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text("Error: ${snapshot.hasError.toString()}"),
+                        Text(
+                          "Error: ${snapshot.hasError.toString()}",
+                        ),
                         TextButton(
                             onPressed: () {
                               Navigator.of(context).pushReplacement(
@@ -58,22 +61,21 @@ class _ReadingBookState extends State<ReadingBook> {
                                       builder: (context) =>
                                           const App(page: library)));
                             },
-                            child: const Text("go to library"))
+                            child: const Text(
+                              "go to library",
+                            ))
                       ],
                     );
                   }
 
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
+                    return const Center(child: CircularProgressIndicator());
                   }
 
                   String idBook = snapshot.data!.docs.first.id;
 
                   return FutureBuilder<DocumentSnapshot>(
-                    future: FirebaseFirestore.instance
-                        .collection("Books")
-                        .doc(idBook)
-                        .get(),
+                    future: booksCollection.doc(idBook).get(),
                     builder: (BuildContext context,
                         AsyncSnapshot<DocumentSnapshot> snapshot) {
                       if (snapshot.hasError) {
@@ -81,12 +83,16 @@ class _ReadingBookState extends State<ReadingBook> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text("Error: ${snapshot.hasError.toString()}"),
+                            Text(
+                              "Error: ${snapshot.hasError.toString()}",
+                            ),
                             TextButton(
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: const Text("go to library"))
+                                child: const Text(
+                                  "go to library",
+                                ))
                           ],
                         );
                       }
@@ -96,12 +102,16 @@ class _ReadingBookState extends State<ReadingBook> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text("Error: document not exist"),
+                            const Text(
+                              "Error: document not exist",
+                            ),
                             TextButton(
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: const Text("Go to library"))
+                                child: const Text(
+                                  "Go to library",
+                                ))
                           ],
                         );
                       }
@@ -116,7 +126,7 @@ class _ReadingBookState extends State<ReadingBook> {
                         );
                       }
 
-                      return const CircularProgressIndicator();
+                      return const Center(child: CircularProgressIndicator());
                     },
                   );
                 }),

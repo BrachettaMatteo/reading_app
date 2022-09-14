@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../book/book.dart';
+import 'package:reading_app/firebase_options.dart';
+import 'package:reading_app/widget/book/book.dart';
 
 class FavoriteSection extends StatefulWidget {
   const FavoriteSection({Key? key}) : super(key: key);
@@ -12,11 +12,10 @@ class FavoriteSection extends StatefulWidget {
 }
 
 class _FavoriteSectionState extends State<FavoriteSection> {
+  String? emaiCurrentlUser = FirebaseAuth.instance.currentUser!.email;
+
   @override
   Widget build(BuildContext context) {
-    CollectionReference users = FirebaseFirestore.instance.collection('Users');
-    String? documentId = FirebaseAuth.instance.currentUser!.email;
-
     return Padding(
         padding: const EdgeInsets.all(5.0),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -31,87 +30,79 @@ class _FavoriteSectionState extends State<FavoriteSection> {
           Container(
               margin: const EdgeInsets.symmetric(vertical: 10.0),
               height: 150.0,
-              child: FutureBuilder<DocumentSnapshot>(
-                  future: users.doc(documentId).get(),
+              child: StreamBuilder<DocumentSnapshot>(
+                  stream: usersCollection
+                      .doc(emaiCurrentlUser)
+                      .snapshots(includeMetadataChanges: true),
                   builder: (BuildContext context,
                       AsyncSnapshot<DocumentSnapshot> snapshot) {
-                    if (snapshot.hasError) {
+                    if (snapshot.hasData && !snapshot.data!.exists ||
+                        snapshot.hasError) {
                       return const Text(
                         "Something went wrong",
                         style: TextStyle(color: Colors.red),
                       );
                     }
 
-                    if (snapshot.hasData && !snapshot.data!.exists) {
-                      return const Text(
-                        "Information does not exist",
-                        style: TextStyle(color: Colors.red),
-                      );
+                    //get list books saved
+                    if (snapshot.data == null) {
+                      return const Center(child: CircularProgressIndicator());
                     }
+                    Map<String, dynamic> data =
+                        snapshot.data!.data() as Map<String, dynamic>;
 
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      //get list books saved
-                      Map<String, dynamic> data =
-                          snapshot.data!.data() as Map<String, dynamic>;
-
-                      List listBooks = data['saved'];
-                      if (listBooks.isEmpty) {
-                        return Center(
-                            child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              "You haven't saved book",
-                              style: TextStyle(color: Colors.red),
-                            ),
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.pushNamedAndRemoveUntil(
-                                      context, "/library", (route) => false);
-                                },
-                                child: const Text("research book"))
-                          ],
-                        ));
-                      }
-
-                      return ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: [
-                            for (String idBook in listBooks)
-                              FutureBuilder<DocumentSnapshot>(
-                                future: FirebaseFirestore.instance
-                                    .collection("Books")
-                                    .doc(idBook)
-                                    .get(),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<DocumentSnapshot> snapshot) {
-                                  if (snapshot.hasError) {
-                                    return const Text("Something went wrong");
-                                  }
-
-                                  if (snapshot.hasData &&
-                                      !snapshot.data!.exists) {
-                                    return const Text(
-                                        "Document does not exist");
-                                  }
-
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.done) {
-                                    Map<String, dynamic> data = snapshot.data!
-                                        .data() as Map<String, dynamic>;
-                                    return Book(
-                                      name: data['title'],
-                                      author: data['author'],
-                                      color: Colors.green,
-                                    );
-                                  }
-
-                                  return const CircularProgressIndicator();
-                                },
-                              )
-                          ]);
+                    List listBooks = data['saved'];
+                    if (listBooks.isEmpty) {
+                      return Center(
+                          child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "You haven't saved book",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pushNamedAndRemoveUntil(
+                                    context, "/library", (route) => false);
+                              },
+                              child: const Text("research book"))
+                        ],
+                      ));
                     }
-                    return const CircularProgressIndicator();
+                    return ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          for (String idBook in listBooks)
+                            FutureBuilder<DocumentSnapshot>(
+                              future: booksCollection.doc(idBook).get(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<DocumentSnapshot> snapshot) {
+                                if (snapshot.hasError) {
+                                  return const Text("Something went wrong");
+                                }
+
+                                if (snapshot.hasData &&
+                                    !snapshot.data!.exists) {
+                                  return const Text("Document does not exist");
+                                }
+
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  Map<String, dynamic> data = snapshot.data!
+                                      .data() as Map<String, dynamic>;
+                                  return Book(
+                                    name: data['title'],
+                                    author: data['author'],
+                                    color: Colors.green,
+                                  );
+                                }
+
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              },
+                            )
+                        ]);
                   }))
         ]));
   }

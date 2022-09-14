@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:reading_app/firebase_options.dart';
 import 'package:reading_app/widget/book/book.dart';
+import 'package:reading_app/widget/section/favorite_section.dart';
 import 'package:reading_app/widget/section/my_book_section.dart';
-
-import 'favorite_section.dart';
 
 class Section extends StatefulWidget {
   const Section({Key? key, required this.material}) : super(key: key);
@@ -37,14 +37,13 @@ class _SectionState extends State<Section> {
                 ),
                 const Spacer(),
                 StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('Books')
+                  stream: booksCollection
                       .where('category', isEqualTo: widget.material!)
                       .snapshots(includeMetadataChanges: true),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.data == null) {
-                      return const CircularProgressIndicator();
+                      return const Center(child: CircularProgressIndicator());
                     }
                     if (snapshot.hasError) {
                       return Center(
@@ -55,7 +54,7 @@ class _SectionState extends State<Section> {
                     }
 
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      const Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     }
                     return Text(
                       snapshot.data!.docs.length.toString(),
@@ -70,21 +69,20 @@ class _SectionState extends State<Section> {
               margin: const EdgeInsets.symmetric(vertical: 10.0),
               height: 150.0,
               child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('Books')
+                stream: booksCollection
                     .where('category', isEqualTo: widget.material!)
                     .snapshots(includeMetadataChanges: true),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.data == null) {
-                    return const CircularProgressIndicator();
+                    return const Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.hasError) {
                     return const Text('Something went wrong');
                   }
 
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    const Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
 
                   return ListView(

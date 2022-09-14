@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../book/book.dart';
+import 'package:reading_app/firebase_options.dart';
+import 'package:reading_app/widget/book/book.dart';
 
 class MyBookSection extends StatefulWidget {
   const MyBookSection({Key? key}) : super(key: key);
@@ -12,10 +12,10 @@ class MyBookSection extends StatefulWidget {
 }
 
 class _MyBookSectionState extends State<MyBookSection> {
+  String? emaiCurrentlUser = FirebaseAuth.instance.currentUser!.email;
+
   @override
   Widget build(BuildContext context) {
-    CollectionReference users = FirebaseFirestore.instance.collection('Users');
-    String? documentId = FirebaseAuth.instance.currentUser!.email;
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10.0),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -30,7 +30,7 @@ class _MyBookSectionState extends State<MyBookSection> {
         SizedBox(
             height: 150.0,
             child: FutureBuilder<DocumentSnapshot>(
-              future: users.doc(documentId).get(),
+              future: usersCollection.doc(emaiCurrentlUser).get(),
               builder: (BuildContext context,
                   AsyncSnapshot<DocumentSnapshot> snapshot) {
                 if (snapshot.hasError) {
@@ -51,14 +51,13 @@ class _MyBookSectionState extends State<MyBookSection> {
                   Map<String, dynamic> data =
                       snapshot.data!.data() as Map<String, dynamic>;
                   return StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('Books')
+                    stream: booksCollection
                         .where('author', isEqualTo: data['username'])
                         .snapshots(includeMetadataChanges: true),
                     builder: (BuildContext context,
                         AsyncSnapshot<QuerySnapshot> snapshot) {
                       if (snapshot.data == null) {
-                        return const CircularProgressIndicator();
+                        return const Center(child: CircularProgressIndicator());
                       }
                       if (snapshot.hasError) {
                         return const Text(
@@ -68,7 +67,7 @@ class _MyBookSectionState extends State<MyBookSection> {
                       }
 
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        const Center(child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
                       }
                       if (!snapshot.hasData) {
                         return const Center(

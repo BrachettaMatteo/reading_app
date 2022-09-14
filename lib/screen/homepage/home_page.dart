@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:reading_app/widget/section/section.dart';
 
 class HomePage extends StatefulWidget {

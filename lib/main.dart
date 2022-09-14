@@ -1,18 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:reading_app/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:reading_app/features/new_book.dart';
 import 'package:reading_app/features/reading_book.dart';
-
 import 'package:reading_app/screen/library/library.dart';
 import 'package:reading_app/screen/login/registrer.dart';
 import 'package:reading_app/screen/profile/profile.dart';
 import 'package:reading_app/screen/homepage/home_page.dart';
 import 'package:reading_app/screen/login/login.dart';
 import 'package:reading_app/screen/profile/setting_user.dart';
-
-import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -80,10 +78,8 @@ class App extends StatefulWidget {
   }
 }
 
-int sele = 0;
-
 class _MainApp extends State<App> {
-  int _selectedIndex = sele;
+  int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     Library(),

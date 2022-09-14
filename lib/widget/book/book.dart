@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:reading_app/firebase_options.dart';
 
 class Book extends StatefulWidget {
   const Book({Key? key, this.name, this.author, this.color}) : super(key: key);
@@ -12,11 +13,10 @@ class Book extends StatefulWidget {
 }
 
 class _BookState extends State<Book> {
+  String? emaiCurrentlUser = FirebaseAuth.instance.currentUser!.email;
+
   @override
   Widget build(BuildContext context) {
-    CollectionReference users = FirebaseFirestore.instance.collection('Users');
-    String? documentId = FirebaseAuth.instance.currentUser!.email;
-
     return SizedBox(
       width: 250,
       child: Card(
@@ -42,7 +42,7 @@ class _BookState extends State<Book> {
                       fontStyle: FontStyle.italic)),
             ),
             FutureBuilder<DocumentSnapshot>(
-              future: users.doc(documentId).get(),
+              future: usersCollection.doc(emaiCurrentlUser).get(),
               builder: (BuildContext context,
                   AsyncSnapshot<DocumentSnapshot> snapshot) {
                 if (snapshot.hasError) {
@@ -97,19 +97,40 @@ class _BookState extends State<Book> {
                                       ),
                                       TextButton(
                                           onPressed: () {
-                                            FirebaseFirestore.instance
-                                                .collection('Books')
+                                            booksCollection
                                                 .where('author',
                                                     isEqualTo: widget.author)
                                                 .where('title',
                                                     isEqualTo: widget.name)
                                                 .get()
-                                                .then((value) =>
-                                                    FirebaseFirestore.instance
-                                                        .collection("Books")
-                                                        .doc(
-                                                            value.docs.first.id)
-                                                        .delete());
+                                                .then((value) {
+                                              //delete book to saved Section
+                                              usersCollection
+                                                  .where('saved',
+                                                      arrayContains:
+                                                          value.docs.first.id)
+                                                  .get()
+                                                  .then((QuerySnapshot
+                                                      querySnapshot) {
+                                                for (var doc
+                                                    in querySnapshot.docs) {
+                                                  List savedBook = doc['saved'];
+                                                  savedBook.remove(
+                                                      value.docs.first.id);
+                                                  usersCollection
+                                                      .doc(doc.id)
+                                                      .set(
+                                                    <String, dynamic>{
+                                                      'saved': savedBook
+                                                    },
+                                                    SetOptions(merge: true),
+                                                  );
+                                                }
+                                              });
+                                              booksCollection
+                                                  .doc(value.docs.first.id)
+                                                  .delete();
+                                            });
                                             Navigator.pop(context);
                                           },
                                           child: const Text(
@@ -160,8 +181,7 @@ class _BookState extends State<Book> {
                                 ),
                                 title: const Text('contact'),
                                 content: FutureBuilder(
-                                  future: FirebaseFirestore.instance
-                                      .collection("Users")
+                                  future: usersCollection
                                       .where('username',
                                           isEqualTo: widget.author)
                                       .get(),
@@ -172,7 +192,8 @@ class _BookState extends State<Book> {
                                       return Text(
                                           "Book: ${widget.name} \nAuthor: ${data['username']}\n\nEmail: ${snapshot.data!.docs.first.id} ");
                                     }
-                                    return const CircularProgressIndicator();
+                                    return const Center(
+                                        child: CircularProgressIndicator());
                                   },
                                 ),
                                 actions: [
@@ -207,7 +228,7 @@ class _BookState extends State<Book> {
                   }
                 }
 
-                return const CircularProgressIndicator();
+                return const Center(child: CircularProgressIndicator());
               },
             ),
           ],
@@ -221,18 +242,13 @@ class _BookState extends State<Book> {
     var book = [];
 
     //reserch id Book
-    FirebaseFirestore.instance
-        .collection('Books')
+    booksCollection
         .where("title", isEqualTo: widget.name)
         .where('author', isEqualTo: widget.author)
         .get()
         .then(((value) => {
               //update array to user profile
-              FirebaseFirestore.instance
-                  .collection('Users')
-                  .doc(FirebaseAuth.instance.currentUser!.email)
-                  .get()
-                  .then((dataUser) {
+              usersCollection.doc(emaiCurrentlUser).get().then((dataUser) {
                 book.addAll(dataUser['saved']);
                 //check the book is contained on saved list
                 if (book.contains(value.docs.first.id)) {
@@ -291,10 +307,7 @@ class _BookState extends State<Book> {
                   ScaffoldMessenger.of(context).showSnackBar(sna);
                 }
                 //update list with query
-                FirebaseFirestore.instance
-                    .collection('Users')
-                    .doc(FirebaseAuth.instance.currentUser!.email)
-                    .update({"saved": book});
+                usersCollection.doc(emaiCurrentlUser).update({"saved": book});
               })
             }));
   }

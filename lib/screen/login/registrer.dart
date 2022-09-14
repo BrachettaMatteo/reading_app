@@ -1,6 +1,6 @@
-import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -175,7 +175,6 @@ class _RegisterState extends State<Register> {
                             _confirmPolicy = value!;
                           });
                         },
-                        // checkColor: Theme.of(context).backgroundColor,
                         checkColor: Colors.green,
                         fillColor:
                             MaterialStateProperty.resolveWith<Color>((states) {

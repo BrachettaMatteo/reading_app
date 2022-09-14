@@ -2,7 +2,7 @@
 Progetto universitario per il corso Progettazione Applicazioni Web e Mobili.
 
 ## Obiettivo
-creare un app (Ios/ Android) in grado di aiutare e/o condividere documenti testuali. L'app implementerà le funzioni necessari per caricare un file di testo e di mettere in contato l'utente con l'autore del testo.
+creare un app (Ios/ Android) in grado di aiutare e/o condividere documenti testuali. L'app implementerà le funzioni necessari per caricare un file di testo e di mettere in contatto l'utente con l'autore del testo.
 
 ## Getting Started
 * clonare la repository 

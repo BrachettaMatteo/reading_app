@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:reading_app/firebase_options.dart';
+import 'package:reading_app/widget/section/section.dart';
 import 'package:flutter/material.dart';
-
-import '../../widget/section/section.dart';
 
 class Library extends StatefulWidget {
   const Library({Key? key}) : super(key: key);
@@ -32,11 +32,8 @@ class _LibraryState extends State<Library> {
   }
 
   Future<List<String>> getElement() async {
-    Future<List<String>> cat = FirebaseFirestore.instance
-        .collection('Books')
-        .orderBy('category')
-        .get()
-        .then((QuerySnapshot qR) {
+    Future<List<String>> cat =
+        booksCollection.orderBy('category').get().then((QuerySnapshot qR) {
       List<String> el = [];
       for (var element in qR.docs) {
         if (!el.contains(element['category'])) {

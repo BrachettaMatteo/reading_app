@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:reading_app/firebase_options.dart';
 
 class SettingUser extends StatefulWidget {
   const SettingUser({Key? key}) : super(key: key);
@@ -14,15 +15,19 @@ class _SettingUserState extends State<SettingUser> {
   TextEditingController surnameController = TextEditingController();
   TextEditingController usernameController = TextEditingController();
 
-  final _key = GlobalKey<FormState>();
+  String? emaiCurrentlUser = FirebaseAuth.instance.currentUser!.email;
+  User currentUser = FirebaseAuth.instance.currentUser!;
 
-  CollectionReference users = FirebaseFirestore.instance.collection('Users');
-  String? documentId = FirebaseAuth.instance.currentUser!.email;
+  final _key = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          title: Text(
+            "Setting Profile",
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
           centerTitle: false,
           iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
           backgroundColor: Theme.of(context).canvasColor,
@@ -32,7 +37,7 @@ class _SettingUserState extends State<SettingUser> {
             child: Padding(
           padding: const EdgeInsets.all(5),
           child: FutureBuilder<DocumentSnapshot>(
-            future: users.doc(documentId).get(),
+            future: usersCollection.doc(emaiCurrentlUser).get(),
             builder: (BuildContext context,
                 AsyncSnapshot<DocumentSnapshot> snapshot) {
               if (snapshot.hasError) {
@@ -60,28 +65,13 @@ class _SettingUserState extends State<SettingUser> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Spacer(),
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.person_outline,
-                                    size: 36,
-                                  ),
-                                  Text(
-                                    "Setting Profile",
-                                    style:
-                                        Theme.of(context).textTheme.titleLarge,
-                                  )
-                                ],
-                              ),
-                              const Spacer(),
                               Text(
                                 "current Name: ${data['name']}",
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 15),
                               ),
                               const SizedBox(
-                                height: 10,
+                                height: 5,
                               ),
                               TextFormField(
                                 controller: nameController,
@@ -110,7 +100,7 @@ class _SettingUserState extends State<SettingUser> {
                                 },
                               ),
                               const SizedBox(
-                                height: 10,
+                                height: 5,
                               ),
                               Text(
                                 "current Surname: ${data['surname']}",
@@ -118,7 +108,7 @@ class _SettingUserState extends State<SettingUser> {
                                     fontWeight: FontWeight.bold, fontSize: 15),
                               ),
                               const SizedBox(
-                                height: 6,
+                                height: 5,
                               ),
                               TextFormField(
                                 controller: surnameController,
@@ -147,7 +137,7 @@ class _SettingUserState extends State<SettingUser> {
                                 },
                               ),
                               const SizedBox(
-                                height: 10,
+                                height: 5,
                               ),
                               Text(
                                 "current Username: ${data['username']}",
@@ -155,7 +145,7 @@ class _SettingUserState extends State<SettingUser> {
                                     fontWeight: FontWeight.bold, fontSize: 15),
                               ),
                               const SizedBox(
-                                height: 6,
+                                height: 5,
                               ),
                               TextFormField(
                                 controller: usernameController,
@@ -183,7 +173,7 @@ class _SettingUserState extends State<SettingUser> {
                                 },
                               ),
                               const SizedBox(
-                                height: 10,
+                                height: 5,
                               ),
                               Center(
                                   child: SizedBox(
@@ -206,9 +196,6 @@ class _SettingUserState extends State<SettingUser> {
                                               Radius.circular(25)),
                                         )))),
                               )),
-                              const Spacer(),
-                              const Spacer(),
-                              const Spacer(),
                             ],
                           ),
                         )));
@@ -251,14 +238,9 @@ class _SettingUserState extends State<SettingUser> {
               TextButton(
                 onPressed: () => {
                   //get oldUsername
-                  FirebaseFirestore.instance
-                      .collection('Users')
-                      .doc(FirebaseAuth.instance.currentUser!.email)
-                      .get()
-                      .then((value) {
-                    FirebaseAuth.instance.currentUser!
-                        .updateDisplayName(usernameController.text);
-                    users.doc(documentId).set(
+                  usersCollection.doc(emaiCurrentlUser).get().then((value) {
+                    currentUser.updateDisplayName(usernameController.text);
+                    usersCollection.doc(emaiCurrentlUser).set(
                       <String, dynamic>{
                         "name": nameController.text,
                         "surname": surnameController.text,
@@ -266,16 +248,12 @@ class _SettingUserState extends State<SettingUser> {
                       },
                       SetOptions(merge: true),
                     );
-                    FirebaseFirestore.instance
-                        .collection('Books')
+                    booksCollection
                         .where('author', isEqualTo: value['username'])
                         .get()
                         .then((QuerySnapshot querySnapshot) {
                       for (var doc in querySnapshot.docs) {
-                        FirebaseFirestore.instance
-                            .collection('Books')
-                            .doc(doc.id)
-                            .set(
+                        booksCollection.doc(doc.id).set(
                           <String, dynamic>{
                             "author": usernameController.text,
                           },
