@@ -57,9 +57,11 @@ class _SectionState extends State<Section> {
                       return const Center(child: CircularProgressIndicator());
                     }
                     return Text(
-                      snapshot.data!.docs.length.toString(),
-                      style: const TextStyle(
-                          color: Colors.redAccent, fontFamily: 'RobotoMono'),
+                      "Total book: ${snapshot.data!.docs.length.toString()}",
+                      style: Theme.of(context).textTheme.labelLarge
+                      /*  style: const TextStyle(
+                          color: Colors.redAccent, fontFamily: 'RobotoMono') */
+                      ,
                     );
                   },
                 ),

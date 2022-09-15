@@ -148,7 +148,13 @@ class _BookState extends State<Book> {
                           width: 10,
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/updateBook',
+                                arguments: {
+                                  "title": widget.name!,
+                                  "author": widget.author!
+                                });
+                          },
                           child: const Text('Update',
                               style: TextStyle(color: Colors.white)),
                         ),
@@ -197,6 +203,9 @@ class _BookState extends State<Book> {
                                   },
                                 ),
                                 actions: [
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
                                   TextButton(
                                       onPressed: () {
                                         Navigator.of(context).pop();

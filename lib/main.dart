@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:reading_app/features/update_book.dart';
 import 'package:reading_app/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,7 @@ Future<void> main() async {
       '/setting_user': (context) => const SettingUser(),
       '/new_book': (context) => const NewBook(),
       '/read': (context) => const ReadingBook(),
+      '/updateBook': (context) => const UpdateBook(),
     },
     builder: (context, child) {
       return Directionality(textDirection: TextDirection.ltr, child: child!);
@@ -43,6 +45,9 @@ Future<void> main() async {
         ),
         textTheme: const TextTheme(
           titleLarge: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+          displaySmall: TextStyle(color: Colors.black54),
+          labelLarge:
+              TextStyle(fontFamily: 'RobotoMono', color: Colors.redAccent),
         ),
         primaryColor: Colors.black),
     darkTheme: ThemeData(
@@ -53,6 +58,8 @@ Future<void> main() async {
         ),
         textTheme: const TextTheme(
           titleLarge: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+          displaySmall: TextStyle(color: Colors.white70),
+          labelLarge: TextStyle(fontFamily: 'RobotoMono', color: Colors.green),
         ),
         primaryColor: Colors.white),
   ));
@@ -74,12 +81,13 @@ class App extends StatefulWidget {
 
   @override
   _MainApp createState() {
-    return _MainApp(page: page);
+    return _MainApp();
   }
 }
 
 class _MainApp extends State<App> {
-  int _selectedIndex = 0;
+  late int _selectedIndex = widget.page;
+
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     Library(),
@@ -90,10 +98,6 @@ class _MainApp extends State<App> {
     Text("Library"),
     Text("Profile"),
   ];
-
-  _MainApp({required int page}) {
-    page < 0 || page > 3 ? _selectedIndex = 0 : _selectedIndex = page;
-  }
 
   @override
   Widget build(BuildContext context) {
