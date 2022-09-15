@@ -13,7 +13,7 @@ This project implement single page application pattren. The choice of single pag
 
 This project uses the services of [Firebase](https://firebase.google.com) 
   
-* [Auth](https://firebase.google.com/docs/auth) To manage the authentication of the app.
-* [Cloud Firestore](https://firebase.google.com/docs/firestore) To manage and maintain user data and documents created.
+* [Auth](https://firebase.google.com/docs/auth) to manage the authentication of the app.
+* [Cloud Firestore](https://firebase.google.com/docs/firestore) to manage and maintain user data and documents created.
     
 
