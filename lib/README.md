@@ -1,14 +1,19 @@
-# Dettagli implementazione
+# Project structure
 
- ## Struttura
- Il progetto è diviso secondo il seguente schema di cartelle:
- * `Component` contenitore dei "componeti" personalizzati implementati.
- * `Screen` contenitore delle diverse pagine implementate.
+This project implement single page application pattren. The choice of single page application was made to have greater speed, efficiency and scalability. In fact, with this pattern we can make requests for resources when we have the real need and have with ease the possibility of implementing new features.
+ 
+ ## Structure
+ 
+ This project is divied for 3 folders:
+* [Features](https://github.com/BrachettaMatteo/reading_app/tree/main/lib/features): contains all the features implemented, such as reading and creating a book ... 
+* [Screen](https://github.com/BrachettaMatteo/reading_app/tree/main/lib/screen): contains all principal "screen" implemented, such as login, homepage ...
+* [Widget](https://github.com/BrachettaMatteo/reading_app/tree/main/lib/widget): contains all widget personalized, such as book, section ...
 
- ## Risorse esterne
- Il progetto utilizza le segienti risorse esterne:
- * [Firebase](https://firebase.google.com) per gestire il back-end dell'app nel dettagli vegnono utilizzati:
-    * [Auth](https://firebase.google.com/docs/auth) per gestire l'autenticazione dell'app
-    * [Cloud Firestore](https://firebase.google.com/docs/firestore) per gestire e mantenere i dati utente e i documenti creati
+## External resources
+
+This project uses the services of [Firebase](https://firebase.google.com) 
+  
+* [Auth](https://firebase.google.com/docs/auth) To manage the authentication of the app.
+* [Cloud Firestore](https://firebase.google.com/docs/firestore) To manage and maintain user data and documents created.
     
 
