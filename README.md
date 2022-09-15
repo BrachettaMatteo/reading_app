@@ -1,19 +1,28 @@
 # Reading App
-Progetto universitario per il corso Progettazione Applicazioni Web e Mobili.
+Undergraduate project for the course Web and Mobile Application Design.
 
-## Obiettivo
-creare un app (Ios/ Android) in grado di aiutare e/o condividere documenti testuali. L'app implementerà le funzioni necessari per caricare un file di testo e di mettere in contatto l'utente con l'autore del testo.
+# Objective
 
-## Getting Started
-* clonare la repository 
+Create an app (Ios/ Android) that can help and/or share text documents. The app will implement the functions necessary to upload a text file and to connect the user with the author of the text. Communication with the author will be via email. For more information go to [wiki](https://github.com/BrachettaMatteo/reading_app/wiki).
+
+# Getting Started
+
+>For security reasons, data is not shared to access Firebase services. So for correct operation create the Secure.dart file with the data for firebase communication and create the Firestone cloud as described in the [wiki](https://github.com/BrachettaMatteo/reading_app/wiki).
+
+### Clone repository
+
 ``` bash
 git clone https://github.com/BrachettaMatteo/readingApp
 ``` 
-* "sistemazione" dipendenza  flutter
+
+### Gets all the dependencies listed in the pubspec.yaml file
+
 ``` bash
 flutter pub get
 ``` 
-* esecuzione 
+
+### Run project 
+
 ``` bash
 flutter run  
 ``` 
