@@ -13,6 +13,8 @@ class MyBookSection extends StatefulWidget {
 
 class _MyBookSectionState extends State<MyBookSection> {
   String? emaiCurrentlUser = FirebaseAuth.instance.currentUser!.email;
+  String? usernameCurrentUser = FirebaseAuth.instance.currentUser!.displayName;
+  TextStyle errrorMesageStyle = const TextStyle(color: Colors.red);
 
   @override
   Widget build(BuildContext context) {
@@ -28,82 +30,47 @@ class _MyBookSectionState extends State<MyBookSection> {
               fontFamily: 'RobotoMono'),
         ),
         SizedBox(
-            height: 150.0,
-            child: FutureBuilder<DocumentSnapshot>(
-              future: usersCollection.doc(emaiCurrentlUser).get(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<DocumentSnapshot> snapshot) {
-                if (snapshot.hasError) {
-                  return const Text(
-                    "Something went wrong",
-                    style: TextStyle(color: Colors.red),
-                  );
-                }
-
-                if (snapshot.hasData && !snapshot.data!.exists) {
-                  return const Text(
-                    "Information does not exist",
-                    style: TextStyle(color: Colors.red),
-                  );
-                }
-
-                if (snapshot.connectionState == ConnectionState.done) {
-                  Map<String, dynamic> data =
-                      snapshot.data!.data() as Map<String, dynamic>;
-                  return StreamBuilder<QuerySnapshot>(
-                    stream: booksCollection
-                        .where('author', isEqualTo: data['username'])
-                        .snapshots(includeMetadataChanges: true),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.data == null) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      if (snapshot.hasError) {
-                        return const Text(
-                          'Something went wrong',
-                          style: TextStyle(color: Colors.red),
-                        );
-                      }
-
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      if (!snapshot.hasData) {
-                        return const Center(
-                          child: Text(
-                            'Book not found',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        );
-                      }
-                      if (snapshot.data!.size == 0) {
-                        return const Center(
-                          child: Text(
-                            "you don't create book",
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        );
-                      }
-                      return ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: snapshot.data!.docs
-                            .map((DocumentSnapshot document) {
-                          Map<String, dynamic> data =
-                              document.data()! as Map<String, dynamic>;
-                          return Book(
-                            name: data['title'],
-                            author: data['author'],
-                            color: Colors.blue,
-                          );
-                        }).toList(),
-                      );
-                    },
-                  );
-                }
+          height: 150,
+          child: StreamBuilder<QuerySnapshot>(
+            stream: booksCollection
+                .where('author', isEqualTo: usernameCurrentUser)
+                .snapshots(includeMetadataChanges: true),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.data == null ||
+                  snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
-              },
-            ))
+              }
+              if (snapshot.hasError || !snapshot.hasData) {
+                return Text(
+                  'Something went wrong',
+                  style: errrorMesageStyle,
+                );
+              }
+
+              if (snapshot.data!.size == 0) {
+                return Center(
+                  child: Text(
+                    "You didn't create any book.",
+                    style: errrorMesageStyle,
+                  ),
+                );
+              }
+              return ListView(
+                scrollDirection: Axis.horizontal,
+                children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                  Map<String, dynamic> data =
+                      document.data()! as Map<String, dynamic>;
+                  return Book(
+                    name: data['title'],
+                    author: data['author'],
+                    color: Colors.blue,
+                  );
+                }).toList(),
+              );
+            },
+          ),
+        )
       ]),
     );
   }

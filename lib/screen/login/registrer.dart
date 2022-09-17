@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
+
+import 'package:reading_app/firebase_options.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -17,8 +20,11 @@ class _RegisterState extends State<Register> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController checkPasswordController = TextEditingController();
+  TextEditingController usernameController = TextEditingController();
 
   final formGlobalKey = GlobalKey<FormState>();
+  bool errorUsername = false;
+  bool errorEmail = false;
 
   late TextStyle policyStyle;
   @override
@@ -31,20 +37,21 @@ class _RegisterState extends State<Register> {
 
     return Scaffold(
         appBar: AppBar(
+          title: Text(
+            'Subscribe',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
           centerTitle: false,
           iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
           backgroundColor: Theme.of(context).canvasColor,
           elevation: 0,
         ),
         body: SafeArea(
-          child: Center(
+            child: Center(
+          child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  "Subscribe",
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
                 Text(
                   "welcome to ReadingApp",
                   style: Theme.of(context).textTheme.subtitle2?.copyWith(
@@ -65,6 +72,30 @@ class _RegisterState extends State<Register> {
                             height: 10,
                           ),
                           TextFormField(
+                            controller: usernameController,
+                            decoration: InputDecoration(
+                                hintText: 'Insert your Username',
+                                labelText: 'Username',
+                                hintStyle:
+                                    Theme.of(context).textTheme.bodyText2,
+                                labelStyle:
+                                    Theme.of(context).textTheme.bodyText2,
+                                border: const OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(50.0)),
+                                )),
+                            validator: (String? value) {
+                              if (usernameController.text.isEmpty) {
+                                return "The username is required ";
+                              } else {
+                                return null;
+                              }
+                            },
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          TextFormField(
                             controller: emailController,
                             decoration: InputDecoration(
                                 hintText: 'Insert your email',
@@ -78,9 +109,28 @@ class _RegisterState extends State<Register> {
                                       BorderRadius.all(Radius.circular(50.0)),
                                 )),
                             validator: (String? value) {
-                              return (value != null && !value.contains('@'))
-                                  ? "email isn't corret"
-                                  : null;
+                              if (value != null && !value.contains('@')) {
+                                return "email isn't corret";
+                              }
+                              usersCollection
+                                  .doc(emailController.text)
+                                  .get()
+                                  .then((DocumentSnapshot dS) {
+                                if (dS.exists) {
+                                  setState(() {
+                                    errorEmail = true;
+                                  });
+                                } else {
+                                  setState(() {
+                                    errorEmail = false;
+                                  });
+                                }
+                              });
+                              if (errorEmail) {
+                                return "The email is already registered";
+                              } else {
+                                return null;
+                              }
                             },
                           ),
                           const SizedBox(
@@ -113,7 +163,7 @@ class _RegisterState extends State<Register> {
                               ),
                             ),
                             validator: (String? value) {
-                              return (value != null && value.length <= 4)
+                              return (value != null && value.length <= 5)
                                   ? 'the password is small'
                                   : null;
                             },
@@ -212,29 +262,76 @@ class _RegisterState extends State<Register> {
               ],
             ),
           ),
-        ));
+        )));
   }
 
   newAccount() async {
     if (formGlobalKey.currentState!.validate() && _confirmPolicy) {
-      try {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
-        );
-        FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: emailController.text, password: passwordController.text);
-        log("correct register account and login");
-        Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'weak-password') {
-          log('The password provided is too weak.');
-        } else if (e.code == 'email-already-in-use') {
-          log('The account already exists for that email.');
+      usersCollection
+          .where('username', isEqualTo: usernameController.text)
+          .get()
+          .then((value) async {
+        if (value.docs.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(errorUsernameMessage());
+          return;
+        } else {
+          try {
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+              email: emailController.text,
+              password: passwordController.text,
+            );
+            FirebaseAuth.instance.signInWithEmailAndPassword(
+                email: emailController.text, password: passwordController.text);
+
+            usersCollection.doc(emailController.text).set({
+              "name": "",
+              "saved": [],
+              'username': usernameController.text,
+              'surname': '',
+              'photo': defaultPhoto,
+            });
+
+            log("correct register account and login: email:${FirebaseAuth.instance.currentUser!.email}");
+            Navigator.pushNamedAndRemoveUntil(
+                context, "/home", (route) => false);
+          } on FirebaseAuthException catch (e) {
+            if (e.code == 'weak-password') {
+              log('The password provided is too weak.');
+            } else if (e.code == 'email-already-in-use') {
+              log('The account already exists for that email.');
+            }
+          } catch (e) {
+            log("error: $e");
+          }
         }
-      } catch (e) {
-        log("error: $e");
-      }
+      });
     }
+  }
+
+  SnackBar errorUsernameMessage() {
+    return SnackBar(
+      width: 300,
+      content: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: const [
+          Icon(
+            Icons.bookmark_remove_outlined,
+            color: Colors.white,
+          ),
+          Text(
+            "username is alredy use",
+            style: TextStyle(color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+      elevation: 6.0,
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.red,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(50.0),
+      ),
+    );
   }
 }

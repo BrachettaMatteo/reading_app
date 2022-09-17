@@ -1,5 +1,9 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:reading_app/firebase_options.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -24,8 +28,7 @@ class _MyLoginPageState extends State<Login> {
     return Scaffold(
         body: SafeArea(
             child: Center(
-                child: Padding(
-      padding: const EdgeInsets.all(10),
+                child: SingleChildScrollView(
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(
           "Login",
@@ -114,30 +117,7 @@ class _MyLoginPageState extends State<Login> {
         SizedBox(
             width: MediaQuery.of(context).size.width * 0.4,
             child: TextButton.icon(
-              onPressed: () async {
-                if (control.currentState!.validate()) {
-                  try {
-                    await FirebaseAuth.instance.signInWithEmailAndPassword(
-                      email: emailController.text,
-                      password: passwordController.text,
-                    );
-                    if (FirebaseAuth.instance.currentUser != null) {
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, '/home', (route) => false);
-                    }
-                  } on FirebaseAuthException catch (e) {
-                    _err = "Error credential";
-                    if (e.code == 'user-not-found') {
-                      debugPrint('No user found for that email.');
-                    } else if (e.code == 'wrong-password') {
-                      debugPrint('Wrong password provided for that user.');
-                    }
-                  } catch (e) {
-                    _err = "Error credential";
-                  }
-                  setState(() {});
-                }
-              },
+              onPressed: (_login),
               icon: const Icon(Icons.lock_outline_rounded),
               label: const Text("Login"),
               style: ButtonStyle(
@@ -151,19 +131,60 @@ class _MyLoginPageState extends State<Login> {
                           borderRadius: BorderRadius.all(Radius.circular(25)),
                           side: BorderSide(color: green)))),
             )),
-        Center(
-            child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text("You not acces? Don't worry"),
-            TextButton(onPressed: (newUser), child: const Text("Register me"))
-          ],
-        ))
+        _registerAction()
       ]),
     ))));
   }
 
-  newUser() {
+  /// got to register screen
+  _newUser() {
     Navigator.pushNamed(context, '/register');
+  }
+
+  /// action for new user
+  _registerAction() {
+    return Center(
+        child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text("You not acces? Don't worry"),
+        TextButton(onPressed: (_newUser), child: const Text("Register me"))
+      ],
+    ));
+  }
+
+  _login() async {
+    if (control.currentState!.validate()) {
+      try {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text,
+        );
+        FirebaseAuth.instance.currentUser!.updateEmail(emailController.text);
+        usersCollection
+            .doc(emailController.text)
+            .get()
+            .then((DocumentSnapshot dS) {
+          Map<String, dynamic> data = dS.data() as Map<String, dynamic>;
+
+          FirebaseAuth.instance.currentUser!
+              .updateDisplayName(data['username']);
+        });
+
+        if (FirebaseAuth.instance.currentUser != null) {
+          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+        }
+      } on FirebaseAuthException catch (e) {
+        _err = "Error credential";
+        if (e.code == 'user-not-found') {
+          log('No user found for that email.');
+        } else if (e.code == 'wrong-password') {
+          log('Wrong password provided for that user.');
+        }
+      } catch (e) {
+        _err = "Error credential";
+      }
+      setState(() {});
+    }
   }
 }

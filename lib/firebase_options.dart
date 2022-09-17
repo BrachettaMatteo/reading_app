@@ -10,8 +10,7 @@ class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
       throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
+        "This project not support web, it only runs with Android and Ios ",
       );
     }
     switch (defaultTargetPlatform) {
@@ -21,19 +20,19 @@ class DefaultFirebaseOptions {
         return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
-          "This project not support macOs, it's only run Android and Ios ",
+          "This project not support macOs,  it only runs with Android and Ios ",
         );
       case TargetPlatform.windows:
         throw UnsupportedError(
-          "This project not support Windows, it's only run Android and Ios ",
+          "This project not support Windows, it only runs with Android and Ios ",
         );
       case TargetPlatform.linux:
         throw UnsupportedError(
-          "This project not support Linux, it's only run Android and Ios ",
+          "This project not support Linux, it only runs with Android and Ios ",
         );
       default:
         throw UnsupportedError(
-          ' This project not supported for this platform.',
+          ' This project not supported for this platform. It only runs with Android and Ios ',
         );
     }
   }
@@ -64,3 +63,7 @@ CollectionReference usersCollection =
 /// firebase collection Books
 CollectionReference booksCollection =
     FirebaseFirestore.instance.collection('Books');
+
+/// firestone cloud position of default photo
+String defaultPhoto =
+    'https://firebasestorage.googleapis.com/v0/b/learning-app-4df40.appspot.com/o/Unknown.png?alt=media&token=c6eafdbe-2833-4bed-9204-7a41e3a64f55';

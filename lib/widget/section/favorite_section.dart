@@ -53,57 +53,57 @@ class _FavoriteSectionState extends State<FavoriteSection> {
 
                     List listBooks = data['saved'];
                     if (listBooks.isEmpty) {
-                      return Center(
-                          child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "You haven't saved book",
-                            style: TextStyle(color: Colors.red),
-                          ),
-                          TextButton(
-                              onPressed: () {
-                                Navigator.pushNamedAndRemoveUntil(
-                                    context, "/library", (route) => false);
-                              },
-                              child: const Text("research book"))
-                        ],
-                      ));
+                      return emptyListBooks();
                     }
-                    return ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          for (String idBook in listBooks)
-                            FutureBuilder<DocumentSnapshot>(
-                              future: booksCollection.doc(idBook).get(),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<DocumentSnapshot> snapshot) {
-                                if (snapshot.hasError) {
-                                  return const Text("Something went wrong");
-                                }
-
-                                if (snapshot.hasData &&
-                                    !snapshot.data!.exists) {
-                                  return const Text("Document does not exist");
-                                }
-
-                                if (snapshot.connectionState ==
-                                    ConnectionState.done) {
-                                  Map<String, dynamic> data = snapshot.data!
-                                      .data() as Map<String, dynamic>;
-                                  return Book(
-                                    name: data['title'],
-                                    author: data['author'],
-                                    color: Colors.green,
-                                  );
-                                }
-
-                                return const Center(
-                                    child: CircularProgressIndicator());
-                              },
-                            )
-                        ]);
+                    return books(listBooks);
                   }))
         ]));
+  }
+
+  /// get book of the insert list
+  Widget books(List listBooks) {
+    return ListView(scrollDirection: Axis.horizontal, children: [
+      for (String idBook in listBooks)
+        FutureBuilder<DocumentSnapshot>(
+          future: booksCollection.doc(idBook).get(),
+          builder:
+              (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+            if (snapshot.hasError ||
+                snapshot.hasData && !snapshot.data!.exists) {
+              return const Text("Something went wrong");
+            }
+            if (snapshot.connectionState == ConnectionState.done) {
+              Map<String, dynamic> data =
+                  snapshot.data!.data() as Map<String, dynamic>;
+              return Book(
+                name: data['title'],
+                author: data['author'],
+                color: Colors.green,
+              );
+            }
+
+            return const Center(child: CircularProgressIndicator());
+          },
+        )
+    ]);
+  }
+
+  Widget emptyListBooks() {
+    return Center(
+        child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          "You haven't saved book",
+          style: TextStyle(color: Colors.red),
+        ),
+        TextButton(
+            onPressed: () {
+              Navigator.pushNamedAndRemoveUntil(
+                  context, "/library", (route) => false);
+            },
+            child: const Text("research book"))
+      ],
+    ));
   }
 }

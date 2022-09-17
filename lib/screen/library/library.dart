@@ -13,10 +13,10 @@ class Library extends StatefulWidget {
 class _LibraryState extends State<Library> {
   @override
   Widget build(BuildContext context) {
-    getElement();
+    //getCategory();
     return SafeArea(
         child: FutureBuilder(
-            future: getElement(),
+            future: getCategory(),
             builder: (context, AsyncSnapshot snapshot) {
               if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
@@ -31,16 +31,17 @@ class _LibraryState extends State<Library> {
             }));
   }
 
-  Future<List<String>> getElement() async {
+  /// get List of category book
+  Future<List<String>> getCategory() async {
     Future<List<String>> cat =
         booksCollection.orderBy('category').get().then((QuerySnapshot qR) {
-      List<String> el = [];
+      List<String> categroy = [];
       for (var element in qR.docs) {
-        if (!el.contains(element['category'])) {
-          el.add(element['category']);
+        if (!categroy.contains(element['category'])) {
+          categroy.add(element['category']);
         }
       }
-      return el;
+      return categroy;
     });
     return await cat;
   }
