@@ -22,7 +22,10 @@ Future<void> main() async {
       brightness: Brightness.dark,
       appBarTheme: const AppBarTheme(
         titleTextStyle: TextStyle(
-            color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25),
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+            backgroundColor: Colors.transparent),
       ),
       textTheme: const TextTheme(
         titleLarge: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
@@ -34,11 +37,13 @@ Future<void> main() async {
 
   ThemeData costomLigthTheme = ThemeData(
       brightness: Brightness.light,
-      backgroundColor: Colors.white,
       appBarTheme: const AppBarTheme(
-        titleTextStyle: TextStyle(
-            color: Colors.black, fontWeight: FontWeight.bold, fontSize: 25),
-      ),
+          titleTextStyle: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+          ),
+          backgroundColor: Colors.transparent),
       textTheme: const TextTheme(
         titleLarge: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
         displaySmall: TextStyle(color: Colors.black54),
@@ -121,9 +126,11 @@ class _MainApp extends State<App> {
     } else {
       return Scaffold(
           appBar: costumAppBar(),
-          body: Center(
-            // select 'screen' of the list
-            child: _widgetOptions.elementAt(_selectedIndex),
+          body: SafeArea(
+            child: Center(
+              // select 'screen' of the list
+              child: _widgetOptions.elementAt(_selectedIndex),
+            ),
           ),
           bottomNavigationBar: costumBottomBar());
     }
@@ -193,7 +200,7 @@ class _MainApp extends State<App> {
   costumAppBar() {
     return AppBar(
       centerTitle: false,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Theme.of(context).canvasColor,
       bottomOpacity: 0.0,
       elevation: 0.0,
       title: _nameOptions.elementAt(_selectedIndex),

@@ -40,7 +40,8 @@ class _NewBookState extends State<NewBook> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
         title: const Text("New Book"),
-        backgroundColor: Colors.transparent,
+        centerTitle: false,
+        backgroundColor: Theme.of(context).canvasColor,
         bottomOpacity: 0.0,
         elevation: 0.0,
       ),

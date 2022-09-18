@@ -32,8 +32,9 @@ class _UpdateBookState extends State<UpdateBook> {
     return Scaffold(
         appBar: AppBar(
           title: const Text("Update Book"),
+          iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
           elevation: 0,
-          backgroundColor: Colors.transparent,
+          backgroundColor: Theme.of(context).canvasColor,
           centerTitle: false,
         ),
         body: SafeArea(

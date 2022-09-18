@@ -67,7 +67,9 @@ class _SettingUserState extends State<SettingUser> {
           .where('username', isEqualTo: usernameController.text)
           .get()
           .then((value) {
-        if (value.docs.isEmpty) {
+        if (value.docs.isEmpty ||
+            FirebaseAuth.instance.currentUser!.displayName ==
+                usernameController.text) {
           //dialog to confirm data
           showDialog(
             context: context,

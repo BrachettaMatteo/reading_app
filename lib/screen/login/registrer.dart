@@ -280,20 +280,26 @@ class _RegisterState extends State<Register> {
               email: emailController.text,
               password: passwordController.text,
             );
-            FirebaseAuth.instance.signInWithEmailAndPassword(
-                email: emailController.text, password: passwordController.text);
+            FirebaseAuth.instance
+                .signInWithEmailAndPassword(
+                    email: emailController.text,
+                    password: passwordController.text)
+                .then((value) {
+              FirebaseAuth.instance.currentUser!
+                  .updateDisplayName(usernameController.text);
+              //create data storage
+              usersCollection.doc(emailController.text).set({
+                "name": "",
+                "saved": [],
+                'username': usernameController.text,
+                'surname': '',
+                'photo': defaultPhoto,
+              });
+              log("correct register account and login: email:${FirebaseAuth.instance.currentUser!.email}");
 
-            usersCollection.doc(emailController.text).set({
-              "name": "",
-              "saved": [],
-              'username': usernameController.text,
-              'surname': '',
-              'photo': defaultPhoto,
+              Navigator.pushNamedAndRemoveUntil(
+                  context, "/library", (route) => false);
             });
-
-            log("correct register account and login: email:${FirebaseAuth.instance.currentUser!.email}");
-            Navigator.pushNamedAndRemoveUntil(
-                context, "/home", (route) => false);
           } on FirebaseAuthException catch (e) {
             if (e.code == 'weak-password') {
               log('The password provided is too weak.');

@@ -32,7 +32,7 @@ class _ReadingBookState extends State<ReadingBook> {
             appBartitle,
           ),
           centerTitle: false,
-          backgroundColor: Colors.transparent,
+          backgroundColor: Theme.of(context).canvasColor,
           elevation: 0,
         ),
         body: SafeArea(

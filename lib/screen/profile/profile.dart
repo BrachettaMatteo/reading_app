@@ -36,7 +36,7 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
         child: ListView(children: [
           StreamBuilder<DocumentSnapshot>(
             stream: usersCollection.doc(emaiCurrentlUser).snapshots(),
@@ -204,7 +204,6 @@ class _ProfileState extends State<Profile> {
                   );
                 }),
           ]),
-          const SizedBox(height: 10),
           const SizedBox(height: 20),
           Center(
               child: SizedBox(
@@ -222,7 +221,7 @@ class _ProfileState extends State<Profile> {
                             side: BorderSide(color: Colors.redAccent))))),
           )),
           const SizedBox(
-            height: 30,
+            height: 10,
           ),
           Center(
               child: SizedBox(
