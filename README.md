@@ -26,7 +26,8 @@ flutter pub get
 ``` bash
 flutter run  
 ```
-# apparence
+# Apparence
+
 ### main screen
 <figure>
   <img src="./doc/img/screen/main_screen.png" alt="main screen image" style="width:80%">
@@ -35,4 +36,9 @@ flutter run
 ### service screen
 <figure>
   <img src="./doc/img/screen/service_screen.png" alt="main screen image" >
+</figure>
+
+### features screen
+<figure>
+  <img src="./doc/img/screen/feature_screen.png" alt="main screen image" >
 </figure>
