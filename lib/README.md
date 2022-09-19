@@ -15,4 +15,7 @@ This project uses the services of [Firebase](https://firebase.google.com)
   
 * [Auth](https://firebase.google.com/docs/auth) to manage the authentication of the app.
 * [Cloud Firestore](https://firebase.google.com/docs/firestore) to manage and maintain user data and documents created.
-    
+* [Cloud Storage](https://firebase.google.com/products/storage) to manage image.
+* [Analytics](https://firebase.google.com/products/analytics) to analyze app.
+
+
