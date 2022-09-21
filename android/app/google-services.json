@@ -7,37 +7,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:586456667520:android:4916371a6f70f751479d65",
+        "mobilesdk_app_id": "1:586456667520:android:87956e7485f1adac479d65",
         "android_client_info": {
           "package_name": "it.matteo.reading_app"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "586456667520-uha6ltv8fa3va0ep2f48lpc7pctr0p85.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBjhnt075XnIEjuZJVE_zkxrRYmi9Ns8Sw"
+          "current_key": "AIzaSyBpYuKtk9gAdblQrDBC7zF1mSvB9lA8kYo"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "586456667520-uha6ltv8fa3va0ep2f48lpc7pctr0p85.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "586456667520-n7tekn64auurb55o2ee3vlsf15j96kmc.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "it.matteo.readingApp"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
